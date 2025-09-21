@@ -4,19 +4,23 @@
   <thead>
     <tr>
       <th>Signal List Name</th>
-      <th>Timeframe</th>
       <th>Trigger Usability</th>
+      <th>Timeframe</th>
+      <th>Indicator</th>
+      <th>Priority</th>
       <th>Signal Name</th>
-      <th>Is Signal Active</th>
+      <th>Active</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>{{ tableData.signal_list_name }}</td>
-      <td>{{ tableData.timeframe }}</td>
-      <td>{{ tableData.trigger_usability }}</td>
-      <td>{{ tableData.signalname }}</td>
-      <td>{{ tableData.is_signal_active }}</td>
+    <tr v-for="(row, idx) in tableRows" :key="idx">
+      <td>{{ row.signal_list_name }}</td>
+      <td>{{ row.trigger_usability }}</td>
+      <td>{{ row.timeframe }}</td>
+      <td>{{ row.indicator }}</td>
+      <td>{{ row.priority }}</td>
+      <td>{{ row.signalname }}</td>
+      <td>{{ row.active }}</td>
     </tr>
   </tbody>
 </table>
@@ -37,36 +41,32 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
-interface InParams {
+
+
+interface TableRow {
   signal_list_name: string;
-  timeframe: string;
   trigger_usability: string;
+  timeframe: string;
+  indicator: string;
+  priority: number;
   signalname: string;
-  is_signal_active: string;
+  active: number;
 }
 
 interface ApiResponse {
   resultx: string;
   errorx: string;
-  inParams: InParams;
+  dtResult: TableRow[];
 }
 
-
-const tableData = ref<InParams>({
-  signal_list_name: '',
-  timeframe: '',
-  trigger_usability: '',
-  signalname: '',
-  is_signal_active: '',
-});
-
+const tableRows = ref<TableRow[]>([]);
 const respError = ref<string>('');
 const respData = ref<string>('');
 
 onMounted(async () => {
   try {
     const response = await axios.post<ApiResponse>(
-      'https://fastapi-app-production-d82b.up.railway.app/items/',
+      'https://fastapi-app-production-d82b.up.railway.app/getAll/',
       {
         signal_list_name: 'pls_usd',
         timeframe: '5m',
@@ -75,8 +75,8 @@ onMounted(async () => {
         is_signal_active: '1',
       }
     );
-    respData.value = JSON.stringify(response.data);
-    tableData.value = response.data.inParams;
+  respData.value = JSON.stringify(response.data);
+  tableRows.value = response.data.dtResult || [];
   } catch (error) {
     console.error('API call failed:', error);
     respError.value = ''+error;
