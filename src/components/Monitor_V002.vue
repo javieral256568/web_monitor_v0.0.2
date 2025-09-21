@@ -23,9 +23,9 @@
 
 <div>
   <h3>Response Data:</h3>
-  <pre>{{ respData }}</pre>
+  <pre style="width:500px;">{{ respData }}</pre>
 </div>
-
+<hr />
 <div v-if="respError">
   <h3>Error:</h3>
   <pre>{{ respError }}</pre>
