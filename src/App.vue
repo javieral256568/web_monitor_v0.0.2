@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
 import Monitor_V0_0_2 from './components/Monitor_V002.vue'
 </script>
 
